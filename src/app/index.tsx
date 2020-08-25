@@ -17,7 +17,7 @@ import { NotFoundPage } from './components/NotFoundPage/Loadable';
 
 export function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/sharkvenger">
       <Helmet
         titleTemplate="%s - React Boilerplate"
         defaultTitle="React Boilerplate"

@@ -11,11 +11,7 @@ export function HomePage() {
   const resize = (app = pixiApp) => {
     if (!app) return;
     setReady(false);
-    const container = document.getElementById('canvas')!;
-    const { offsetWidth, offsetHeight } = container;
-    const { resolution } = app.renderer;
-    app.renderer.resize(offsetWidth / resolution, offsetHeight / resolution);
-    app.stage.scale.set(1 / resolution, 1 / resolution);
+    app.resize();
     setReady(true);
   };
 
@@ -26,16 +22,23 @@ export function HomePage() {
       <Stage
         onMount={app => {
           setApp(app);
-          setTimeout(() => resize(app), 0);
+          app.resizeTo = document.getElementById('canvas')!;
+          setTimeout(() => {
+            app.resize();
+            setReady(true);
+          });
         }}
         options={{
+          forceCanvas: false,
+          antialias: true,
           backgroundColor: 0x52b3d9,
+          autoDensity: true,
+          autoStart: true,
         }}
       >
         {ready && (
           <>
             <CapsTbpLogos />
-            <SharkDetector />
           </>
         )}
       </Stage>

@@ -18,11 +18,13 @@ export const GlobalStyle = createGlobalStyle`
     justify-content: center;
     background-color: rgba(137, 196, 244, 0.5);
     width: 100%;
+    padding-bottom: env(safe-area-inset-bottom);
   }
 
   #canvas {
     width: 100%;
     height: 100vh;
+    height: calc(100vh -  env(safe-area-inset-bottom));
     max-width: 600px;
     background-color: #fff;
   }
