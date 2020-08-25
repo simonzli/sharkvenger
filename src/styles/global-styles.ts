@@ -1,36 +1,40 @@
 import { createGlobalStyle } from 'styled-components';
-import { StyleConstants } from './StyleConstants';
-/* istanbul ignore next */
+
 export const GlobalStyle = createGlobalStyle`
   html,
   body {
     height: 100%;
     width: 100%;
-    line-height: 1.5;
   }
 
   body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    padding-top: ${StyleConstants.NAV_BAR_HEIGHT};
-    background-color: ${p => p.theme.background};
+    margin: 0;
   }
 
-  body.fontLoaded {
-    font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  #root {
+    min-height: 100%;
+    display: flex;
+    justify-content: center;
+    background-color: rgba(137, 196, 244, 0.5);
+    width: 100%;
   }
-  
+
+  #canvas {
+    width: 100%;
+    height: 100vh;
+    max-width: 600px;
+    background-color: #fff;
+  }
+
   p,
   label {
+    font-family: Georgia, Times, 'Times New Roman', serif;
     line-height: 1.5em;
   }
 
-  input, select, button {
+  input, select {
     font-family: inherit;
     font-size: inherit;
-  }
-
-  .icon {
-    width: 1.5rem;
-    height: 1.5rem;
   }
 `;
