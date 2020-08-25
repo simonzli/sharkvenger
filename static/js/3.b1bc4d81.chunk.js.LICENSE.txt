@@ -125,6 +125,26 @@
  */
 
 /*!
+ * CSSPlugin 3.5.0
+ * https://greensock.com
+ *
+ * Copyright 2008-2020, GreenSock. All rights reserved.
+ * Subject to the terms at https://greensock.com/standard-license or for
+ * Club GreenSock members, the agreement issued with that membership.
+ * @author: Jack Doyle, jack@greensock.com
+*/
+
+/*!
+ * GSAP 3.5.0
+ * https://greensock.com
+ *
+ * @license Copyright 2008-2020, GreenSock. All rights reserved.
+ * Subject to the terms at https://greensock.com/standard-license or for
+ * Club GreenSock members, the agreement issued with that membership.
+ * @author: Jack Doyle, jack@greensock.com
+*/
+
+/*!
  * pixi.js - v5.3.3
  * Compiled Tue, 04 Aug 2020 16:23:09 UTC
  *
