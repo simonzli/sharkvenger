@@ -24,9 +24,11 @@ export const GlobalStyle = createGlobalStyle`
   #canvas {
     width: 100%;
     height: 100vh;
-    height: calc(100vh - env(safe-area-inset-bottom));
+    height: -webkit-fill-available;
     max-width: 600px;
-    background-color: #fff;
+    background-color: #52b3d9;
+    opacity: 0;
+    transition: opacity 0.3s;
   }
 
   p,

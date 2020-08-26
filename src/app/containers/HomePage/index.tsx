@@ -3,11 +3,15 @@ import { Stage } from '@inlet/react-pixi';
 
 import CapsTbpLogos from 'app/components/CapsTbpLogos';
 import SharkDetector from 'app/components/SharkDetector';
+import ConversationBox from 'app/components/ConversationBox';
 import Shark from 'app/characters/Shark';
 
 export function HomePage() {
   const [ready, setReady] = useState(false);
   const [pixiApp, setApp] = useState<PIXI.Application>();
+  const [opacity, setOpacity] = useState(0);
+
+  const { height } = pixiApp?.screen ?? { width: 0, height: 0 };
 
   const resize = (app = pixiApp) => {
     if (!app) return;
@@ -19,13 +23,14 @@ export function HomePage() {
   window.onresize = () => resize();
 
   return (
-    <div id="canvas">
+    <div id="canvas" style={{ opacity }}>
       <Stage
         width={400}
         onMount={app => {
           setApp(app);
           app.resizeTo = document.getElementById('canvas')!;
           setTimeout(() => {
+            setOpacity(1);
             app.resize();
             setReady(true);
           });
@@ -42,7 +47,9 @@ export function HomePage() {
           <>
             <CapsTbpLogos />
             <SharkDetector />
-            <Shark />
+
+            <Shark position={[48, height - 130]} angle={-45} scale={[-3, 3]} />
+            <ConversationBox />
           </>
         )}
       </Stage>

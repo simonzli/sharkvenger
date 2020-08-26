@@ -18,7 +18,7 @@ export default function SharkDetector() {
   const app = useApp();
   const heartCenter = {
     x: app.screen.width / 2,
-    y: app.screen.height / 2 + 40,
+    y: app.screen.height / 2 - 40,
   };
 
   const { start } = useInterval(
@@ -96,15 +96,6 @@ export default function SharkDetector() {
         anchor={[0.5, 0.5]}
         position={[heartCenter.x, heartCenter.y - 5]}
       />
-      <Sprite
-        ref={instance => {
-          if (instance) setHeart(instance);
-        }}
-        image={getResource('heart.svg')}
-        anchor={[0.5, 0.55]}
-        position={heartCenter}
-        scale={64 / 512}
-      />
       <Text
         text={
           geo
@@ -119,7 +110,7 @@ export default function SharkDetector() {
               )
             : ''
         }
-        position={[PADDING, 150]}
+        position={[PADDING, 120]}
         style={
           new TextStyle({
             wordWrap: true,
@@ -129,6 +120,15 @@ export default function SharkDetector() {
             letterSpacing: 2,
           })
         }
+      />
+      <Sprite
+        ref={instance => {
+          if (instance) setHeart(instance);
+        }}
+        image={getResource('heart.svg')}
+        anchor={[0.5, 0.55]}
+        position={heartCenter}
+        scale={64 / 512}
       />
     </>
   );
