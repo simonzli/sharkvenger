@@ -1,19 +1,19 @@
 import React, { useState, useCallback } from 'react';
-import { useInterval } from 'react-interval-hook';
 import { TextStyle } from 'pixi.js';
 import { Graphics, Sprite, Text, useApp } from '@inlet/react-pixi';
 import gsap from 'gsap';
 
-import { getLocation, getResource } from 'utils';
+import { watchLocation, getResource } from 'utils';
 
 export default function SharkDetector() {
   const PADDING = 16;
   const HEART_SCALE_FACTOR = 108 / 512;
   const RADAR_RADIUS = 512 * HEART_SCALE_FACTOR;
 
+  let graph: PIXI.Graphics;
+  let heart: PIXI.Sprite;
+
   const [geo, setGeo] = useState<Position>();
-  const [graph, setGraph] = useState<PIXI.Graphics>();
-  const [heart, setHeart] = useState<PIXI.Sprite>();
 
   const app = useApp();
   const heartCenter = {
@@ -21,27 +21,19 @@ export default function SharkDetector() {
     y: app.screen.height / 2 - 40,
   };
 
-  const { start } = useInterval(
-    () => {
-      getLoc();
-    },
-    5000,
-    { autoStart: false, immediate: true },
-  );
-
   const draw = useCallback((g: PIXI.Graphics) => {
     g.clear();
     g.lineStyle(7, 0x2574a9, 0.5);
     g.drawCircle(0, 0, RADAR_RADIUS);
     g.endFill();
-    setGraph(g);
-    setTimeout(start, 0);
+    graph = g;
+    watchLocation(geo => {
+      setGeo(geo);
+      updateHeartMotion();
+    });
   }, []);
 
-  const getLoc = async () => {
-    const loc = await getLocation({ enableHighAccuracy: true });
-    setGeo(loc);
-
+  async function updateHeartMotion() {
     if (!heart || !graph) return;
     const heartScale = Math.max(1 / 1.5, Math.random() + 0.5);
 
@@ -87,7 +79,7 @@ export default function SharkDetector() {
     } catch (err) {
       console.error(err);
     }
-  };
+  }
 
   return (
     <>
@@ -104,6 +96,8 @@ export default function SharkDetector() {
                   latitude: geo.coords.latitude,
                   longitude: geo.coords.longitude,
                   accuracy: `${geo.coords.accuracy} meters`,
+                  altitude: geo.coords.altitude,
+                  altitudeAccuracy: geo.coords.altitudeAccuracy,
                 },
                 undefined,
                 1,
@@ -123,8 +117,9 @@ export default function SharkDetector() {
       />
       <Sprite
         ref={instance => {
-          if (instance) setHeart(instance);
+          if (instance) heart = instance;
         }}
+        angle={15}
         image={getResource('heart.svg')}
         anchor={[0.5, 0.55]}
         position={heartCenter}

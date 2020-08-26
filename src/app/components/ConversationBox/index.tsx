@@ -44,7 +44,7 @@ export default function ConversationBox() {
       />
       <Text
         text={
-          'Somebody stole my kid while I was doing home schooling. Would you help me find him?'
+          'Somebody kidnapped my baby while I was doing home schooling. Would you help me find him?'
         }
         position={[PADDING, PADDING + NAME_HEIGHT]}
         style={

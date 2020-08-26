@@ -24,11 +24,18 @@ export const GlobalStyle = createGlobalStyle`
   #canvas {
     width: 100%;
     height: 100vh;
-    height: -webkit-fill-available;
     max-width: 600px;
     background-color: #52b3d9;
     opacity: 0;
     transition: opacity 0.3s;
+  }
+
+  @media not all and (min-resolution:.001dpcm) {
+    @supports (-webkit-appearance:none) {
+      #canvas { 
+        height: -webkit-fill-available;
+      }
+    }
   }
 
   p,
