@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Stage } from '@inlet/react-pixi';
 
-import CapsTbpLogos from '../../components/CapsTbpLogos';
-import SharkDetector from '../../components/SharkDetector';
+import CapsTbpLogos from 'app/components/CapsTbpLogos';
+import SharkDetector from 'app/components/SharkDetector';
+import Shark from 'app/characters/Shark';
 
 export function HomePage() {
   const [ready, setReady] = useState(false);
@@ -20,6 +21,7 @@ export function HomePage() {
   return (
     <div id="canvas">
       <Stage
+        width={400}
         onMount={app => {
           setApp(app);
           app.resizeTo = document.getElementById('canvas')!;
@@ -39,6 +41,8 @@ export function HomePage() {
         {ready && (
           <>
             <CapsTbpLogos />
+            <SharkDetector />
+            <Shark />
           </>
         )}
       </Stage>

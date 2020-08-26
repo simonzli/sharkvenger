@@ -13,11 +13,13 @@ import { Switch, Route, BrowserRouter } from 'react-router-dom';
 import { GlobalStyle } from 'styles/global-styles';
 
 import { HomePage } from './containers/HomePage/Loadable';
-import { NotFoundPage } from './components/NotFoundPage/Loadable';
+import { NotFoundPage } from './containers/NotFoundPage/Loadable';
+
+import { getBasename } from 'utils';
 
 export function App() {
   return (
-    <BrowserRouter basename="/sharkvenger">
+    <BrowserRouter basename={getBasename()}>
       <Helmet
         titleTemplate="%s - React Boilerplate"
         defaultTitle="React Boilerplate"

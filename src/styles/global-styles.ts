@@ -24,7 +24,7 @@ export const GlobalStyle = createGlobalStyle`
   #canvas {
     width: 100%;
     height: 100vh;
-    height: calc(100vh -  env(safe-area-inset-bottom));
+    height: calc(100vh - env(safe-area-inset-bottom));
     max-width: 600px;
     background-color: #fff;
   }
