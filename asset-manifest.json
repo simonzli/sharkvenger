@@ -1,20 +1,20 @@
 {
   "files": {
     "main.js": "/sharkvenger/static/js/main.68eeca0d.chunk.js",
-    "runtime-main.js": "/sharkvenger/static/js/runtime-main.d779d6ca.js",
+    "runtime-main.js": "/sharkvenger/static/js/runtime-main.fa9ec8e9.js",
     "static/css/2.d54bb455.chunk.css": "/sharkvenger/static/css/2.d54bb455.chunk.css",
     "static/js/2.0f34767a.chunk.js": "/sharkvenger/static/js/2.0f34767a.chunk.js",
     "static/js/3.7f5fdeff.chunk.js": "/sharkvenger/static/js/3.7f5fdeff.chunk.js",
-    "static/js/4.5cc8752b.chunk.js": "/sharkvenger/static/js/4.5cc8752b.chunk.js",
+    "static/js/4.513c3d5b.chunk.js": "/sharkvenger/static/js/4.513c3d5b.chunk.js",
     "static/js/5.9215107a.chunk.js": "/sharkvenger/static/js/5.9215107a.chunk.js",
     "index.html": "/sharkvenger/index.html",
-    "precache-manifest.c53b7eb78bd87a531059d1cc0a13bc9e.js": "/sharkvenger/precache-manifest.c53b7eb78bd87a531059d1cc0a13bc9e.js",
+    "precache-manifest.35327db226b7eb142059f0d76c84d9e8.js": "/sharkvenger/precache-manifest.35327db226b7eb142059f0d76c84d9e8.js",
     "service-worker.js": "/sharkvenger/service-worker.js",
     "static/js/2.0f34767a.chunk.js.LICENSE.txt": "/sharkvenger/static/js/2.0f34767a.chunk.js.LICENSE.txt",
     "static/js/3.7f5fdeff.chunk.js.LICENSE.txt": "/sharkvenger/static/js/3.7f5fdeff.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
-    "static/js/runtime-main.d779d6ca.js",
+    "static/js/runtime-main.fa9ec8e9.js",
     "static/css/2.d54bb455.chunk.css",
     "static/js/2.0f34767a.chunk.js",
     "static/js/main.68eeca0d.chunk.js"
