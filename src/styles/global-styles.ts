@@ -16,6 +16,7 @@ export const GlobalStyle = createGlobalStyle`
     min-height: 100%;
     display: flex;
     justify-content: center;
+    align-items: center;
     background-color: rgba(137, 196, 244, 0.5);
     width: 100%;
     padding-bottom: env(safe-area-inset-bottom);
@@ -25,6 +26,7 @@ export const GlobalStyle = createGlobalStyle`
     width: 100%;
     height: 100vh;
     max-width: 600px;
+    max-height: 1024px;
     background-color: #52b3d9;
     opacity: 0;
     transition: opacity 0.3s;

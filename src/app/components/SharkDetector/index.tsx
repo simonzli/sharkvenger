@@ -31,7 +31,7 @@ export default function SharkDetector() {
   const [container, setContainer] = useState<PIXI.Container>();
   const [heart, setHeart] = useState<PIXI.Sprite>();
   const [isHeartCenter, setHeartCenter] = useState(false);
-  const [centerHeartTl] = useState(gsap.timeline());
+  const [centerHeartTl, setCenterHeartTl] = useState<gsap.core.Timeline>();
   const [geo, setGeo] = useState<Position>();
 
   const draw = useCallback((g: PIXI.Graphics) => {
@@ -41,28 +41,34 @@ export default function SharkDetector() {
     g.endFill();
   }, []);
 
-  const initializeCenterHeartTimeline = (container: PIXI.Container) => {
-    const timeline = centerHeartTl;
-    timeline.pause();
+  const initializeCenterHeartTimeline = useCallback(
+    async (container: PIXI.Container) => {
+      if (centerHeartTl) return;
+      const timeline = gsap.timeline();
+      timeline.pause();
 
-    timeline.to(
-      container.position,
-      {
-        ...containerCenterPosition,
-        ease: 'power2.inOut',
-      },
-      0,
-    );
+      timeline.to(
+        container.position,
+        {
+          ...containerCenterPosition,
+          ease: 'power2.inOut',
+        },
+        0,
+      );
 
-    timeline.to(
-      container.scale,
-      {
-        ...convertScaleToObject(containerCenterScale),
-        ease: 'power2.inOut',
-      },
-      0,
-    );
-  };
+      timeline.to(
+        container.scale,
+        {
+          ...convertScaleToObject(containerCenterScale),
+          ease: 'power2.inOut',
+        },
+        0,
+      );
+
+      setCenterHeartTl(timeline);
+    },
+    [centerHeartTl],
+  );
 
   const centerHeart = useCallback(async () => {
     if (!centerHeartTl) return;
@@ -92,6 +98,8 @@ export default function SharkDetector() {
       ...motion,
     };
 
+    const heartTweens = gsap.getTweensOf(heart.scale);
+
     try {
       const createTween = () => {
         const tween = gsap.to(heart.scale, {
@@ -104,20 +112,20 @@ export default function SharkDetector() {
         });
       };
 
-      // heartTweens.filter(t => !t.isActive()).forEach(t => t.pause());
-      // const tweens = heartTweens.filter(t => t.isActive());
-      // if (tweens.length > 0) {
-      //   tweens.slice(1).forEach(t => t.pause());
-      //   tweens[0].eventCallback('onRepeat', () => {
-      //     tweens[0].vars.repeatTime = (tweens[0].vars.repeatTime ?? 0) + 1;
-      //     if (tweens[0].vars.repeatTime % 2 === 0) {
-      //       tweens[0].pause();
-      //       createTween();
-      //     }
-      //   });
-      // } else {
-      //   createTween();
-      // }
+      heartTweens.filter(t => !t.isActive()).forEach(t => t.pause());
+      const tweens = heartTweens.filter(t => t.isActive());
+      if (tweens.length > 0) {
+        tweens.slice(1).forEach(t => t.pause());
+        tweens[0].eventCallback('onRepeat', () => {
+          tweens[0].vars.repeatTime = (tweens[0].vars.repeatTime ?? 0) + 1;
+          if (tweens[0].vars.repeatTime % 2 === 0) {
+            tweens[0].pause();
+            createTween();
+          }
+        });
+      } else {
+        createTween();
+      }
     } catch (err) {
       console.error(err);
     }
@@ -128,12 +136,16 @@ export default function SharkDetector() {
       <Container
         ref={instance => {
           if (!instance || container) return;
+          instance.position.set(
+            containerInitialPosition.x,
+            containerInitialPosition.y,
+          );
+          instance.scale.set(containerInitialScale, containerInitialScale);
           setContainer(instance);
           initializeCenterHeartTimeline(instance);
         }}
-        position={containerInitialPosition}
-        scale={containerInitialScale}
         tap={centerHeart}
+        click={centerHeart}
         interactive
       >
         <Graphics
@@ -144,7 +156,9 @@ export default function SharkDetector() {
 
         <Sprite
           ref={instance => {
-            setHeart(instance!);
+            if (!instance) return;
+            instance.scale.set(HEART_SCALE_FACTOR, HEART_SCALE_FACTOR);
+            setHeart(instance);
             watchLocation(geo => {
               setGeo(geo);
               updateHeartMotion();
@@ -154,7 +168,6 @@ export default function SharkDetector() {
           image={getResource('heart.svg')}
           anchor={[0.5, 0.55]}
           position={heartCenter}
-          scale={HEART_SCALE_FACTOR}
         />
       </Container>
       <Text
