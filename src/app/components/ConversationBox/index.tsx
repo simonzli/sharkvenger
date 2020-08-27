@@ -41,6 +41,7 @@ export default function ConversationBox() {
             letterSpacing: 1,
           })
         }
+        click={() => console.log(3232)}
       />
       <Text
         text={
