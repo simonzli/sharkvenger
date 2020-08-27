@@ -3,16 +3,14 @@ import { Stage } from '@inlet/react-pixi';
 
 import CapsTbpLogos from 'app/components/CapsTbpLogos';
 import SharkDetector from 'app/components/SharkDetector';
-import ConversationBox from 'app/components/ConversationBox';
-import Shark from 'app/characters/Shark';
-import Suica from 'app/characters/Suica';
+
+import { intro } from 'app/scripts';
+import Director from 'app/controllers/Director';
 
 export function HomePage() {
   const [ready, setReady] = useState(false);
   const [pixiApp, setApp] = useState<PIXI.Application>();
   const [opacity, setOpacity] = useState(0);
-
-  const { width, height } = pixiApp?.screen ?? { width: 0, height: 0 };
 
   const resize = (app = pixiApp) => {
     if (!app) return;
@@ -49,9 +47,7 @@ export function HomePage() {
             <CapsTbpLogos />
             <SharkDetector />
 
-            <Suica position={[width - 90, height - 130]} scale={[2.5, 2.5]} />
-            <Shark position={[48, height - 130]} angle={-45} scale={[-3, 3]} />
-            <ConversationBox />
+            <Director script={intro} />
           </>
         )}
       </Stage>
