@@ -1,7 +1,8 @@
 import React from 'react';
 import { Sprite, useApp, _ReactPixi } from '@inlet/react-pixi';
 
-import { getResource, convertScaleToArray, multiplyScale, Scale } from 'utils';
+import { Scale } from 'types';
+import { getResource, convertScaleToArray, multiplyScale } from 'utils';
 
 export default function Suica(props?: Partial<_ReactPixi.ISprite>) {
   const app = useApp();

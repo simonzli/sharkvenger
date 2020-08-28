@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { TextStyle, BitmapFont, Loader } from 'pixi.js';
 import { Stage } from '@inlet/react-pixi';
 
 import CapsTbpLogos from 'app/components/CapsTbpLogos';
@@ -7,10 +8,34 @@ import SharkDetector from 'app/components/SharkDetector';
 import { intro } from 'app/scripts';
 import Director from 'app/controllers/Director';
 
+import { getResource } from 'utils';
+
 export function HomePage() {
   const [ready, setReady] = useState(false);
+  const [resourceReady, setResourceReady] = useState(false);
   const [pixiApp, setApp] = useState<PIXI.Application>();
   const [opacity, setOpacity] = useState(0);
+
+  useEffect(() => loadFont(), []);
+
+  const loadFont = () => {
+    new Loader()
+      .add(
+        'Lato',
+        getResource('/Lato.fnt'),
+        new TextStyle({
+          dropShadowColor: 0x333,
+          dropShadowAngle: 0,
+          dropShadowBlur: 2,
+          dropShadowAlpha: 0.5,
+          dropShadowDistance: 2,
+          letterSpacing: 0.5,
+        }),
+      )
+      .load(() => {
+        setResourceReady(true);
+      });
+  };
 
   const resize = (app = pixiApp) => {
     if (!app) return;
@@ -29,9 +54,9 @@ export function HomePage() {
           setApp(app);
           app.resizeTo = document.getElementById('canvas')!;
           setTimeout(() => {
-            setOpacity(1);
             app.resize();
             setReady(true);
+            setOpacity(1);
           });
         }}
         options={{
@@ -42,7 +67,7 @@ export function HomePage() {
           autoStart: true,
         }}
       >
-        {ready && (
+        {ready && resourceReady && (
           <>
             <CapsTbpLogos />
             <SharkDetector />
