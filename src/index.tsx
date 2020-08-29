@@ -14,6 +14,10 @@ import { Provider } from 'react-redux';
 import * as serviceWorker from 'serviceWorker';
 import 'sanitize.css/sanitize.css';
 
+import * as PIXI from 'pixi.js';
+import gsap from 'gsap';
+import PixiPlugin from 'gsap/PixiPlugin';
+
 // Import root app
 import { App } from 'app';
 
@@ -23,6 +27,9 @@ import { configureAppStore } from 'store/configureStore';
 
 // Initialize languages
 import './locales/i18n';
+
+gsap.registerPlugin(PixiPlugin);
+PixiPlugin.registerPIXI(PIXI);
 
 const store = configureAppStore();
 const MOUNT_NODE = document.getElementById('root') as HTMLElement;

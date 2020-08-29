@@ -1,7 +1,7 @@
-import { PointLike } from 'types/Common';
+import { PointLike, ArrayScale } from 'types/Common';
 
 export interface CharacterProps {
-  initialPosition?: PointLike;
+  initialPosition?: ArrayScale;
   initialScale?: PointLike;
   initialAngle?: number;
   expression?: string;

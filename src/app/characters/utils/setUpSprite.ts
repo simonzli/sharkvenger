@@ -37,17 +37,15 @@ export const setUpSprite = (
 
   const diffMovements = diff.movements ?? [];
 
-  gsap.killTweensOf(sprite);
-
   if (diffMovements.includes('active')) {
     movements.active(sprite, initialPosition);
-  }
-
-  if (diffMovements.includes('inactive')) {
+  } else if (diffMovements.includes('!active')) {
     movements.active(sprite, initialPosition, true);
   }
 
   if (diffMovements.includes('shake')) {
-    movements.shake(sprite);
+    movements.shake(sprite, 0.5, initialValues.initialAngle);
+  } else if (diffMovements.includes('!shake')) {
+    gsap.killTweensOf(sprite.transform, 'rotation');
   }
 };

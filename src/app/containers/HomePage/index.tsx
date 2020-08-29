@@ -2,9 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { TextStyle, Loader } from 'pixi.js';
 import { Stage } from '@inlet/react-pixi';
 
-import CapsTbpLogos from 'app/components/CapsTbpLogos';
-import SharkDetector from 'app/components/SharkDetector';
-
 import { intro } from 'app/scripts';
 import Director from 'app/controllers/Director';
 
@@ -69,9 +66,6 @@ export function HomePage() {
       >
         {ready && resourceReady && (
           <>
-            <CapsTbpLogos />
-            <SharkDetector />
-
             <Director script={intro} />
           </>
         )}

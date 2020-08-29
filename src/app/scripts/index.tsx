@@ -27,8 +27,13 @@ export const intro: Script = {
     [
       {
         character: Character.MommyShark,
+        movements: ['!shake'],
         text:
           'Somebody kidnapped my baby while I was doing home schooling. Would you help me find him?',
+      },
+      {
+        character: Character.Suica,
+        movements: ['!shake'],
       },
     ],
     [
@@ -36,6 +41,17 @@ export const intro: Script = {
         character: Character.Suica,
         text: 'Of course!',
         movements: ['shake'],
+      },
+    ],
+    [
+      {
+        character: Character.MommyShark,
+        movements: ['shake'],
+        text: 'Thank you!!!',
+      },
+      {
+        character: Character.Suica,
+        movements: ['active', 'shake'],
       },
     ],
   ],

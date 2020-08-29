@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '@inlet/react-pixi';
 
+import Background from 'app/components/Background';
 import ConversationBox from 'app/components/ConversationBox';
+import SharkDetector from 'app/components/SharkDetector';
+import CapsTbpLogos from 'app/components/CapsTbpLogos';
+
 import { Line, Script } from 'app/scripts';
 
 import Shark from 'app/characters/Shark';
@@ -21,11 +25,13 @@ type Character = {
   character: CharacterEnum;
   sprite: (props?: CharacterProps) => JSX.Element;
   props: CharacterProps;
+  position: 'left' | 'right' | 'middle';
 };
 
 export default function Director(props: DirectorProps) {
   const { script } = props;
-  const [line, setLine] = useState(0);
+  const [line, setLine] = useState(+(localStorage.getItem('line') ?? 0));
+  const [initialized, setInitialized] = useState(false);
   const [characters, setCharacters] = useState<Character[]>([]);
 
   const app = useApp();
@@ -47,19 +53,30 @@ export default function Director(props: DirectorProps) {
   };
 
   const getActiveMovement = (character: CharacterEnum) => {
-    return script.lines[line][0].character === character
-      ? 'active'
-      : 'inactive';
+    if (script.lines[line][0].character === character) return 'active';
+    const relevantLine = script.lines[line].find(
+      l => l.character === character,
+    );
+    if (relevantLine && relevantLine.movements?.includes('active'))
+      return 'active';
+    return '!active';
+  };
+
+  const goToNextLine = () => {
+    const nextLine = script.lines.length === line + 1 ? 0 : line + 1;
+    localStorage.setItem('line', '' + nextLine);
+    setLine(nextLine);
   };
 
   const getCharacter = (character: CharacterEnum) =>
     characters.find(c => c.character === character);
 
-  const getCharacterProps = (line: Line, initialize = false) => {
+  const getCharacterProps = (line: Line, prevProps?: CharacterProps) => {
     const props: CharacterProps = {};
     if (line.character === undefined) return props;
-    if (initialize) {
-      props.initialPosition = [48, height - 130];
+    const HEIGHT = height - 130;
+    if (prevProps === undefined) {
+      props.initialPosition = [48, HEIGHT];
       props.initialScale = [1, 1];
       if (line.position === 'right') {
         props.initialPosition[0] = width - 90;
@@ -74,17 +91,19 @@ export default function Director(props: DirectorProps) {
 
   const updateCharactersList = () => {
     const newCharacters = [...characters];
-    if (line === 0) {
+    if (!initialized) {
       for (const setting of script.initialSetting) {
         if (getCharacter(setting.character) !== undefined) continue;
         const sprite = getCharacterSprite(setting.character);
 
         newCharacters.push({
+          position: setting.position ?? 'left',
           character: setting.character,
           sprite,
-          props: getCharacterProps(setting, true),
+          props: getCharacterProps(setting),
         });
       }
+      setInitialized(true);
     }
 
     const currentLines = script.lines[line];
@@ -108,14 +127,24 @@ export default function Director(props: DirectorProps) {
   const renderCharacters = () =>
     characters.map(c => <c.sprite {...c.props} key={c.character} />);
 
+  const name = CharacterName[script.lines[line][0].character ?? -1];
+  const mainCharacter = getCharacter(script.lines[line][0].character ?? -1);
+
   return (
     <>
+      <Background />
+
+      <CapsTbpLogos />
+
       {renderCharacters()}
       <ConversationBox
-        name={CharacterName[script.lines[line][0].character ?? -1]}
+        name={name}
+        namePosition={mainCharacter?.position ?? 'left'}
         text={script.lines[line][0].text}
-        onClick={() => setLine(1 - line)}
+        onClick={goToNextLine}
       />
+
+      <SharkDetector />
     </>
   );
 }

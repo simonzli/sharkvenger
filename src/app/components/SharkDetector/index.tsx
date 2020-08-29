@@ -18,7 +18,7 @@ export default function SharkDetector() {
     y: RADAR_RADIUS,
   };
   const containerInitialScale = 0.8;
-  const containerCenterScale = 1.5;
+  const containerCenterScale = 1.7;
   const containerInitialPosition = {
     x: width - 2 * RADAR_RADIUS * containerInitialScale - PADDING,
     y: 50,
@@ -36,7 +36,8 @@ export default function SharkDetector() {
 
   const draw = useCallback((g: PIXI.Graphics) => {
     g.clear();
-    g.lineStyle(7, 0x2574a9, 0.5);
+    g.beginFill(0x52b3d9);
+    g.lineStyle(7, 0x3c94c2);
     g.drawCircle(0, 0, RADAR_RADIUS);
     g.endFill();
   }, []);
