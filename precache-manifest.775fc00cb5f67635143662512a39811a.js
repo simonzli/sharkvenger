@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "789783cd3e830caa0045fd83865e683c",
+    "revision": "ef83699501853250a535eeb79fc7d92b",
     "url": "/sharkvenger/index.html"
   },
   {
@@ -16,16 +16,16 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/sharkvenger/static/js/2.324d4f89.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "6ddde253f4d648da6d9b",
-    "url": "/sharkvenger/static/js/3.9f6fcfac.chunk.js"
+    "revision": "addb00fa614913deddd0",
+    "url": "/sharkvenger/static/js/3.5be62c50.chunk.js"
   },
   {
     "revision": "81c9713faa08be73407361f2bca16c76",
-    "url": "/sharkvenger/static/js/3.9f6fcfac.chunk.js.LICENSE.txt"
+    "url": "/sharkvenger/static/js/3.5be62c50.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "f497cccf76b1a2428d3e",
-    "url": "/sharkvenger/static/js/4.ed38871e.chunk.js"
+    "revision": "a6b6baeb67792b164421",
+    "url": "/sharkvenger/static/js/4.778eaf06.chunk.js"
   },
   {
     "revision": "e9ba45a3463728172b2e",
@@ -36,7 +36,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/sharkvenger/static/js/main.c38bf91c.chunk.js"
   },
   {
-    "revision": "7d63ddf5ca46ef9239a2",
-    "url": "/sharkvenger/static/js/runtime-main.be914dde.js"
+    "revision": "8bad04e5daf32cf4f048",
+    "url": "/sharkvenger/static/js/runtime-main.3f70d4f2.js"
   }
 ]);
