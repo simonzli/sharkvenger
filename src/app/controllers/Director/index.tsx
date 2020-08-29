@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useApp } from '@inlet/react-pixi';
+import { Container, useApp } from '@inlet/react-pixi';
 
 import Background from 'app/components/Background';
 import ConversationBox from 'app/components/ConversationBox';
-import SharkDetector from 'app/components/SharkDetector';
 import CapsTbpLogos from 'app/components/CapsTbpLogos';
+import MathQuiz from 'app/components/MathQuiz';
 
 import { Line, Script } from 'app/scripts';
 
@@ -125,7 +125,17 @@ export default function Director(props: DirectorProps) {
   };
 
   const renderCharacters = () =>
-    characters.map(c => <c.sprite {...c.props} key={c.character} />);
+    characters
+      .sort((a, b) => {
+        const isAActive = (a.props.movements ?? []).includes('active');
+        if (!isAActive) return -1;
+        const isBActive = (b.props.movements ?? []).includes('active');
+        if (!isBActive) return 1;
+
+        const isASpeaking = script.lines[line][0].character === a.character;
+        return isASpeaking ? 1 : -1;
+      })
+      .map(c => <c.sprite {...c.props} key={c.character} />);
 
   const name = CharacterName[script.lines[line][0].character ?? -1];
   const mainCharacter = getCharacter(script.lines[line][0].character ?? -1);
@@ -136,7 +146,8 @@ export default function Director(props: DirectorProps) {
 
       <CapsTbpLogos />
 
-      {renderCharacters()}
+      <Container>{renderCharacters()}</Container>
+
       <ConversationBox
         name={name}
         namePosition={mainCharacter?.position ?? 'left'}
@@ -144,7 +155,7 @@ export default function Director(props: DirectorProps) {
         onClick={goToNextLine}
       />
 
-      <SharkDetector />
+      <MathQuiz />
     </>
   );
 }

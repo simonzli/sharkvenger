@@ -189,7 +189,7 @@ export default function SharkDetector() {
               )
             : ''
         }
-        position={[PADDING, 120]}
+        position={[PADDING, 160]}
         style={
           new TextStyle({
             wordWrap: true,
@@ -197,6 +197,13 @@ export default function SharkDetector() {
             fontSize: 14,
             align: 'left',
             letterSpacing: 2,
+            fill: 0xffffff,
+            dropShadow: true,
+            dropShadowColor: 0x0,
+            dropShadowAngle: 0,
+            dropShadowBlur: 4,
+            dropShadowAlpha: 0.8,
+            dropShadowDistance: 0,
           })
         }
       />

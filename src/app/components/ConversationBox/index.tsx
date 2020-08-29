@@ -62,7 +62,7 @@ export default function ConversationBox(props: ConversationBoxProps) {
   const PADDING = 8;
   const WIDTH = Math.min(400, width - 2 * PADDING);
   const REAL_PADDING = (width - WIDTH) / 2;
-  const BOTTOM_OFFSET = 16;
+  const BOTTOM_OFFSET = 12;
 
   const drawBox = (g: PIXI.Graphics) => {
     if (g.getBounds().width !== 0) return;

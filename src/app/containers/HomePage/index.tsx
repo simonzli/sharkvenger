@@ -6,6 +6,7 @@ import { intro } from 'app/scripts';
 import Director from 'app/controllers/Director';
 
 import { getResource } from 'utils';
+import SharkDetector from 'app/components/SharkDetector';
 
 export function HomePage() {
   const [ready, setReady] = useState(false);
@@ -67,6 +68,8 @@ export function HomePage() {
         {ready && resourceReady && (
           <>
             <Director script={intro} />
+
+            <SharkDetector />
           </>
         )}
       </Stage>
