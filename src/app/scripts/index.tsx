@@ -8,13 +8,14 @@ export interface Setting {
 export interface Line {
   character?: Character;
   expression?: string;
+  movements?: string[];
   position?: 'left' | 'right' | 'middle'; // Previous position by default
   text?: string;
 }
 
 export type Script = {
   initialSetting: Setting[];
-  lines: Line[];
+  lines: Line[][];
 };
 
 export const intro: Script = {
@@ -23,14 +24,19 @@ export const intro: Script = {
     { character: Character.Suica, position: 'right' },
   ],
   lines: [
-    {
-      character: Character.MommyShark,
-      text:
-        'Somebody kidnapped my baby while I was doing home schooling. Would you help me find him?',
-    },
-    {
-      character: Character.Suica,
-      text: 'Of course!',
-    },
+    [
+      {
+        character: Character.MommyShark,
+        text:
+          'Somebody kidnapped my baby while I was doing home schooling. Would you help me find him?',
+      },
+    ],
+    [
+      {
+        character: Character.Suica,
+        text: 'Of course!',
+        movements: ['shake'],
+      },
+    ],
   ],
 };

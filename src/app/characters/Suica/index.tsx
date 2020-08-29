@@ -1,22 +1,44 @@
-import React from 'react';
-import { Sprite, useApp, _ReactPixi } from '@inlet/react-pixi';
+import React, { useEffect, useState } from 'react';
+import { usePrevious } from 'react-delta';
+import { Sprite, useApp } from '@inlet/react-pixi';
 
-import { Scale } from 'types';
-import { getResource, convertScaleToArray, multiplyScale } from 'utils';
+import { CharacterProps } from 'types';
+import { getResource, convertScaleToObject } from 'utils';
 
-export default function Suica(props?: Partial<_ReactPixi.ISprite>) {
+import {
+  getPropDiff,
+  getPropWatchList,
+  setUpSprite,
+} from 'app/characters/utils';
+
+export default function Suica(props: CharacterProps = {}) {
+  const [sprite, setSprite] = useState<PIXI.Sprite>();
+  const prevProps = usePrevious(props);
+
   const app = useApp();
-  let scale = convertScaleToArray(Math.min(0.5, app.screen.width / 1500));
-  if (props && props.scale) {
-    scale = multiplyScale(scale, props.scale.valueOf() as Scale);
-  }
+  const INITIAL_SCALE = convertScaleToObject([
+    -Math.min(1.25, app.screen.width / 600),
+    Math.min(1.25, app.screen.width / 600),
+  ]);
+  const initialValues: CharacterProps = {
+    initialScale: INITIAL_SCALE,
+    initialPosition: props.initialPosition,
+  };
+
+  useEffect(() => {
+    if (!sprite) return;
+    const diff = getPropDiff(props, prevProps);
+    setUpSprite(sprite, diff, initialValues, false);
+  }, getPropWatchList(props));
 
   return (
     <Sprite
+      ref={instance => {
+        if (!instance || sprite) return;
+        setSprite(instance);
+        setUpSprite(instance, props, initialValues, true);
+      }}
       image={getResource('suica.png')}
-      anchor={0.5}
-      {...props}
-      scale={scale}
     />
   );
 }

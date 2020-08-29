@@ -5,7 +5,7 @@ export interface CharacterProps {
   initialScale?: PointLike;
   initialAngle?: number;
   expression?: string;
-  movement?: string;
+  movements?: string[];
 }
 
 export const DEFAULT_CHARACTER_PROPS = {

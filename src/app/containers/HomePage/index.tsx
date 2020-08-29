@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TextStyle, BitmapFont, Loader } from 'pixi.js';
+import { TextStyle, Loader } from 'pixi.js';
 import { Stage } from '@inlet/react-pixi';
 
 import CapsTbpLogos from 'app/components/CapsTbpLogos';

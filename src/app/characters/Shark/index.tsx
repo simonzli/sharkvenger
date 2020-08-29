@@ -1,33 +1,46 @@
-import React from 'react';
-import { Sprite, useApp, _ReactPixi } from '@inlet/react-pixi';
+import React, { useState, useEffect } from 'react';
+import { usePrevious } from 'react-delta';
+import { Sprite, useApp } from '@inlet/react-pixi';
 
-import { getResource } from 'utils';
+import {
+  getPropWatchList,
+  getPropDiff,
+  setUpSprite,
+} from 'app/characters/utils';
+import { getResource, convertScaleToObject } from 'utils';
+import { CharacterProps } from 'types';
 
-type Scale = number | { x: number; y: number } | [number, number];
+export default function Shark(props: CharacterProps = {}) {
+  const [sprite, setSprite] = useState<PIXI.Sprite>();
+  const prevProps = usePrevious(props);
 
-export default function Shark(props?: Partial<_ReactPixi.ISprite>) {
   const app = useApp();
-  let scale: Scale = Math.min(0.5, app.screen.width / 1500);
-  if (props && props.scale) {
-    const propScale = props.scale.valueOf() as Scale;
-    if (typeof propScale === 'number') {
-      scale *= propScale;
-    } else if (Array.isArray(propScale)) {
-      scale = [propScale[0] * scale, propScale[1] * scale];
-    } else {
-      scale = {
-        x: scale * propScale.x,
-        y: scale * propScale.y,
-      };
-    }
-  }
+  const INITIAL_SCALE = convertScaleToObject([
+    -Math.min(1.5, app.screen.width / 500),
+    Math.min(1.5, app.screen.width / 500),
+  ]);
+  const INITIAL_ANGLE = -45;
+
+  const initialValues: CharacterProps = {
+    initialScale: INITIAL_SCALE,
+    initialAngle: INITIAL_ANGLE,
+    initialPosition: props.initialPosition,
+  };
+
+  useEffect(() => {
+    if (!sprite) return;
+    const diff = getPropDiff(props, prevProps);
+    setUpSprite(sprite, diff, initialValues, false);
+  }, getPropWatchList(props));
 
   return (
     <Sprite
+      ref={instance => {
+        if (!instance || sprite) return;
+        setSprite(instance);
+        setUpSprite(instance, props, initialValues, true);
+      }}
       image={getResource('shark.png')}
-      anchor={0.5}
-      {...props}
-      scale={scale}
     />
   );
 }

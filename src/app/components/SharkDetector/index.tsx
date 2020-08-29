@@ -47,8 +47,9 @@ export default function SharkDetector() {
       const timeline = gsap.timeline();
       timeline.pause();
 
-      timeline.to(
+      timeline.fromTo(
         container.position,
+        containerInitialPosition,
         {
           ...containerCenterPosition,
           ease: 'power2.inOut',
@@ -56,8 +57,9 @@ export default function SharkDetector() {
         0,
       );
 
-      timeline.to(
+      timeline.fromTo(
         container.scale,
+        convertScaleToObject(containerInitialScale),
         {
           ...convertScaleToObject(containerCenterScale),
           ease: 'power2.inOut',
