@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/sharkvenger/precache-manifest.ac95bddbb92561f45f5588a39c00f059.js"
+  "/sharkvenger/precache-manifest.d877b3e700a6f5353451f83072c5523f.js"
 );
 
 self.addEventListener('message', (event) => {
