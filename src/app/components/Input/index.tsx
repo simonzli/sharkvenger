@@ -3,6 +3,7 @@ import TextInput, {
   InputProps,
   BoxStyleItem,
   BoxStyleGroup,
+  BoxStyle,
 } from 'pixi-text-input';
 import { PixiComponent } from '@inlet/react-pixi';
 
@@ -53,8 +54,9 @@ const Input = PixiComponent<InputProps, TextInput>('Input', {
     const inputStyle = { ...defaultInputStyle, ...props.input };
     const groupBoxStyle = props.box as BoxStyleGroup;
     const singleBoxStyle = props.box as BoxStyleItem;
-    const boxStyle =
-      props.box && Object.keys(props.box).includes('default')
+    let boxStyle: BoxStyle = defaultBoxStyle;
+    if (props.box) {
+      boxStyle = Object.keys(props.box).includes('default')
         ? {
             default: { ...defaultSingleBoxStyle, ...groupBoxStyle.default },
             focused: { ...defaultBoxStyle.focused, ...groupBoxStyle.focused },
@@ -64,6 +66,7 @@ const Input = PixiComponent<InputProps, TextInput>('Input', {
             },
           }
         : { ...defaultSingleBoxStyle, ...singleBoxStyle };
+    }
     const instance = new TextInput({
       input: inputStyle,
       box: boxStyle,

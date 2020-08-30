@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Container, useApp } from '@inlet/react-pixi';
+import { useSelector, useDispatch } from 'react-redux';
+
+import {
+  getDirectorState,
+  conversationActions,
+  directorActions,
+} from 'store/slices';
 
 import Background from 'app/components/Background';
 import ConversationBox from 'app/components/ConversationBox';
@@ -29,13 +36,20 @@ type Character = {
 };
 
 export default function Director(props: DirectorProps) {
+  const state = useSelector(getDirectorState);
+  const dispatch = useDispatch();
+
   const { script } = props;
-  const [line, setLine] = useState(+(localStorage.getItem('line') ?? 0));
+  const { line } = state;
   const [initialized, setInitialized] = useState(false);
   const [characters, setCharacters] = useState<Character[]>([]);
 
   const app = useApp();
   const { width, height } = app.screen;
+
+  useEffect(() => {
+    goToNextLine(line);
+  }, []);
 
   useEffect(() => {
     updateCharactersList();
@@ -62,10 +76,28 @@ export default function Director(props: DirectorProps) {
     return '!active';
   };
 
-  const goToNextLine = () => {
-    const nextLine = script.lines.length === line + 1 ? 0 : line + 1;
-    localStorage.setItem('line', '' + nextLine);
-    setLine(nextLine);
+  const goToNextLine = (nextLine?: number) => {
+    const nl =
+      nextLine === undefined
+        ? script.lines.length === line + 1
+          ? 0
+          : line + 1
+        : nextLine;
+    localStorage.setItem('line', '' + nl);
+    dispatch(directorActions.updateDirector({ ...state, line: nl }));
+
+    const name = CharacterName[script.lines[nl][0].character ?? -1];
+    const mainCharacter = getCharacter(script.lines[nl][0].character ?? -1);
+    const namePosition = mainCharacter?.position ?? 'left';
+    const { text = '' } = script.lines[nl][0];
+    dispatch(
+      conversationActions.updateConversation({
+        name,
+        namePosition,
+        text,
+        showConversationBox: true,
+      }),
+    );
   };
 
   const getCharacter = (character: CharacterEnum) =>
@@ -137,9 +169,6 @@ export default function Director(props: DirectorProps) {
       })
       .map(c => <c.sprite {...c.props} key={c.character} />);
 
-  const name = CharacterName[script.lines[line][0].character ?? -1];
-  const mainCharacter = getCharacter(script.lines[line][0].character ?? -1);
-
   return (
     <>
       <Background />
@@ -148,12 +177,7 @@ export default function Director(props: DirectorProps) {
 
       <Container>{renderCharacters()}</Container>
 
-      <ConversationBox
-        name={name}
-        namePosition={mainCharacter?.position ?? 'left'}
-        text={script.lines[line][0].text}
-        onClick={goToNextLine}
-      />
+      <ConversationBox onClick={() => goToNextLine()} />
 
       <MathQuiz />
     </>

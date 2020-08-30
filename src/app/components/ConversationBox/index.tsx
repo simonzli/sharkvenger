@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { TextStyle } from 'pixi.js';
 import {
   Container,
@@ -8,6 +9,8 @@ import {
   useApp,
 } from '@inlet/react-pixi';
 import gsap from 'gsap';
+
+import { getConversationState } from 'store/slices';
 
 interface ConversationBoxProps {
   onClick?: (event: PIXI.InteractionEvent) => void;
@@ -30,7 +33,10 @@ const nameTextStyle = new TextStyle({
 });
 
 export default function ConversationBox(props: ConversationBoxProps) {
-  const { onClick, name, text, namePosition = 'left' } = props;
+  const state = useSelector(getConversationState);
+  const { name, text, namePosition, showConversationBox } = state;
+
+  const { onClick } = props;
 
   const [clickable, setClickable] = useState(false);
   const [displayText, setDisplayText] = useState('');
@@ -56,6 +62,8 @@ export default function ConversationBox(props: ConversationBoxProps) {
       setClickable(true);
     }
   };
+
+  if (!showConversationBox) return <React.Fragment />;
 
   const NAME_HEIGHT = 24;
   const HEIGHT = 120;

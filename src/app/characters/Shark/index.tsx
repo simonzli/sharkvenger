@@ -7,6 +7,7 @@ import {
   getPropDiff,
   setUpSprite,
 } from 'app/characters/utils';
+import { initialScene } from 'app/characters/movements/shark';
 import { getResource, convertScaleToObject } from 'utils';
 import { CharacterProps } from 'types';
 
@@ -15,9 +16,10 @@ export default function Shark(props: CharacterProps = {}) {
   const prevProps = usePrevious(props);
 
   const app = useApp();
+  const { width, height } = app.screen;
   const INITIAL_SCALE = convertScaleToObject([
-    -Math.min(1.5, app.screen.width / 500),
-    Math.min(1.5, app.screen.width / 500),
+    -Math.min(1.5, width / 500),
+    Math.min(1.5, width / 500),
   ]);
   const INITIAL_ANGLE = -45;
 
@@ -31,6 +33,9 @@ export default function Shark(props: CharacterProps = {}) {
     if (!sprite) return;
     const diff = getPropDiff(props, prevProps);
     setUpSprite(sprite, diff, initialValues, false);
+    if ((diff?.movements ?? []).includes('initialScene')) {
+      initialScene(sprite, INITIAL_SCALE, width, height);
+    }
   }, getPropWatchList(props));
 
   return (
@@ -39,6 +44,9 @@ export default function Shark(props: CharacterProps = {}) {
         if (!instance || sprite) return;
         setSprite(instance);
         setUpSprite(instance, props, initialValues, true);
+        if ((props.movements ?? []).includes('initialScene')) {
+          initialScene(instance, INITIAL_SCALE, width, height);
+        }
       }}
       image={getResource('shark.png')}
     />
