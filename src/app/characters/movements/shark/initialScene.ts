@@ -1,5 +1,7 @@
 import gsap from 'gsap';
+import { Dispatch } from 'redux';
 import { ObjectScale } from 'types';
+import { conversationActions } from 'store/slices';
 
 export const SHARK_INITIAL_SCENE_DURATION = 20.4;
 export const initialScene = async (
@@ -7,7 +9,14 @@ export const initialScene = async (
   initialScale: ObjectScale,
   width: number,
   height: number,
+  dispatch: Dispatch,
 ) => {
+  dispatch(
+    conversationActions.updateConversation({
+      showConversationBox: false,
+      text: '',
+    }),
+  );
   const timeline = gsap.timeline();
   let time = 0;
   timeline.fromTo(
@@ -166,4 +175,11 @@ export const initialScene = async (
     time,
   );
   await timeline.play();
+  dispatch(
+    conversationActions.updateConversation({
+      name: 'Mommy Shark',
+      showConversationBox: true,
+      text: 'WHERE IS BABY SHARK!!!',
+    }),
+  );
 };

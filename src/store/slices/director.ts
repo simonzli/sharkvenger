@@ -1,7 +1,6 @@
 import { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from 'utils/@reduxjs/toolkit';
 import { DirectorState, defaultDirectorState, RootState } from 'types';
-import { useInjectReducer } from 'utils/redux-injectors';
 
 const directorSlice = createSlice({
   name: 'director',
@@ -21,12 +20,6 @@ export const {
   reducer: directorReducer,
   name: directorSliceKey,
 } = directorSlice;
-
-export const useDirectorReducer = () =>
-  useInjectReducer({
-    key: directorSliceKey,
-    reducer: directorReducer,
-  });
 
 export const getDirectorState = (state: RootState) =>
   state.director ?? defaultDirectorState;

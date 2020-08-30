@@ -5,23 +5,13 @@ import { ReactReduxContext } from 'react-redux';
 
 import { intro } from 'app/scripts';
 import Director from 'app/controllers/Director';
-import Shark from 'app/characters/Shark';
 
 import { getResource } from 'utils';
-import {
-  useConversationReducer,
-  useDetectorReducer,
-  useDirectorReducer,
-} from 'store/slices';
 
 import SharkDetector from 'app/components/SharkDetector';
 import ContextBridge from 'ContextBridge';
 
 export function HomePage() {
-  useConversationReducer();
-  useDetectorReducer();
-  useDirectorReducer();
-
   const [ready, setReady] = useState(false);
   const [resourceReady, setResourceReady] = useState(false);
   const [pixiApp, setApp] = useState<PIXI.Application>();
@@ -87,10 +77,7 @@ export function HomePage() {
       >
         {ready && resourceReady && (
           <>
-            <Shark movements={['initialScene']} />
-
             <Director script={intro} />
-
             <SharkDetector />
           </>
         )}

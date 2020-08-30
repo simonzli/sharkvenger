@@ -11,6 +11,8 @@ import 'react-app-polyfill/stable';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
+import { persistStore } from 'redux-persist';
+import { PersistGate } from 'redux-persist/integration/react';
 import * as serviceWorker from 'serviceWorker';
 import 'sanitize.css/sanitize.css';
 
@@ -32,6 +34,7 @@ gsap.registerPlugin(PixiPlugin);
 PixiPlugin.registerPIXI(PIXI);
 
 const store = configureAppStore();
+const persistor = persistStore(store);
 const MOUNT_NODE = document.getElementById('root') as HTMLElement;
 
 interface Props {
@@ -41,7 +44,9 @@ const ConnectedApp = ({ Component }: Props) => (
   <Provider store={store}>
     <HelmetProvider>
       <React.StrictMode>
-        <Component />
+        <PersistGate persistor={persistor}>
+          <Component />
+        </PersistGate>
       </React.StrictMode>
     </HelmetProvider>
   </Provider>

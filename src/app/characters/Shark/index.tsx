@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { usePrevious } from 'react-delta';
+import { useDispatch } from 'react-redux';
 import { Sprite, useApp } from '@inlet/react-pixi';
 
 import {
@@ -12,6 +13,7 @@ import { getResource, convertScaleToObject } from 'utils';
 import { CharacterProps } from 'types';
 
 export default function Shark(props: CharacterProps = {}) {
+  const dispatch = useDispatch();
   const [sprite, setSprite] = useState<PIXI.Sprite>();
   const prevProps = usePrevious(props);
 
@@ -34,7 +36,7 @@ export default function Shark(props: CharacterProps = {}) {
     const diff = getPropDiff(props, prevProps);
     setUpSprite(sprite, diff, initialValues, false);
     if ((diff?.movements ?? []).includes('initialScene')) {
-      initialScene(sprite, INITIAL_SCALE, width, height);
+      initialScene(sprite, INITIAL_SCALE, width, height, dispatch);
     }
   }, getPropWatchList(props));
 
@@ -45,7 +47,7 @@ export default function Shark(props: CharacterProps = {}) {
         setSprite(instance);
         setUpSprite(instance, props, initialValues, true);
         if ((props.movements ?? []).includes('initialScene')) {
-          initialScene(instance, INITIAL_SCALE, width, height);
+          initialScene(instance, INITIAL_SCALE, width, height, dispatch);
         }
       }}
       image={getResource('shark.png')}

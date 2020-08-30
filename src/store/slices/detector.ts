@@ -1,7 +1,6 @@
 import { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from 'utils/@reduxjs/toolkit';
 import { DetectorState, defaultDetectorState } from 'types';
-import { useInjectReducer } from 'utils/redux-injectors';
 
 const detectorSlice = createSlice({
   name: 'detector',
@@ -20,9 +19,3 @@ export const {
   reducer: detectorReducer,
   name: detectorSliceKey,
 } = detectorSlice;
-
-export const useDetectorReducer = () =>
-  useInjectReducer({
-    key: detectorSliceKey,
-    reducer: detectorReducer,
-  });
