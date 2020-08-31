@@ -1,22 +1,18 @@
 import gsap from 'gsap';
-import { Dispatch } from 'redux';
-import { ObjectScale } from 'types';
-import { conversationActions } from 'store/slices';
+import { MovementProps } from 'types';
+import { convertScaleToObject } from 'utils';
 
 export const SHARK_INITIAL_SCENE_DURATION = 20.4;
-export const initialScene = async (
-  sprite: PIXI.Sprite,
-  initialScale: ObjectScale,
-  width: number,
-  height: number,
-  dispatch: Dispatch,
-) => {
-  dispatch(
-    conversationActions.updateConversation({
-      showConversationBox: false,
-      text: '',
-    }),
+export const initialScene = async ({
+  sprite,
+  initialValues,
+  pixiApp,
+}: MovementProps) => {
+  const initialScale = convertScaleToObject(
+    initialValues?.initialScale ?? { x: 1, y: 1 },
   );
+  const { width = 600, height = 800 } = pixiApp?.screen ?? {};
+
   const timeline = gsap.timeline();
   let time = 0;
   timeline.fromTo(
@@ -175,11 +171,4 @@ export const initialScene = async (
     time,
   );
   await timeline.play();
-  dispatch(
-    conversationActions.updateConversation({
-      name: 'Mommy Shark',
-      showConversationBox: true,
-      text: 'WHERE IS BABY SHARK!!!',
-    }),
-  );
 };

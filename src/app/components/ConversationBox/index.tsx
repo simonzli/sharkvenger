@@ -128,7 +128,9 @@ export default function ConversationBox(props: ConversationBoxProps) {
       interactive
     >
       <Graphics draw={drawBox} position={[0, NAME_HEIGHT]} />
-      {clickable && <Graphics draw={drawTriangle} />}
+      {clickable && props.onClick !== undefined && (
+        <Graphics draw={drawTriangle} />
+      )}
       {renderName()}
       <BitmapText
         text={displayText}

@@ -7,10 +7,11 @@ import {
   getPropWatchList,
   getPropDiff,
   setUpSprite,
+  executeMovements,
 } from 'app/characters/utils';
-import { initialScene } from 'app/characters/movements/shark';
 import { getResource, convertScaleToObject } from 'utils';
 import { CharacterProps } from 'types';
+import { Character } from 'app/scripts';
 
 export default function Shark(props: CharacterProps = {}) {
   const dispatch = useDispatch();
@@ -18,7 +19,7 @@ export default function Shark(props: CharacterProps = {}) {
   const prevProps = usePrevious(props);
 
   const app = useApp();
-  const { width, height } = app.screen;
+  const { width } = app.screen;
   const INITIAL_SCALE = convertScaleToObject([
     -Math.min(1.5, width / 500),
     Math.min(1.5, width / 500),
@@ -34,10 +35,13 @@ export default function Shark(props: CharacterProps = {}) {
   useEffect(() => {
     if (!sprite) return;
     const diff = getPropDiff(props, prevProps);
-    setUpSprite(sprite, diff, initialValues, false);
-    if ((diff?.movements ?? []).includes('initialScene')) {
-      initialScene(sprite, INITIAL_SCALE, width, height, dispatch);
-    }
+    executeMovements(props.movements ?? [], {
+      sprite,
+      dispatch,
+      pixiApp: app,
+      character: Character.MommyShark,
+      initialValues: setUpSprite(sprite, diff, initialValues, false),
+    });
   }, getPropWatchList(props));
 
   return (
@@ -45,10 +49,12 @@ export default function Shark(props: CharacterProps = {}) {
       ref={instance => {
         if (!instance || sprite) return;
         setSprite(instance);
-        setUpSprite(instance, props, initialValues, true);
-        if ((props.movements ?? []).includes('initialScene')) {
-          initialScene(instance, INITIAL_SCALE, width, height, dispatch);
-        }
+        executeMovements(props.movements ?? [], {
+          sprite: instance,
+          dispatch,
+          pixiApp: app,
+          initialValues: setUpSprite(instance, props, initialValues, true),
+        });
       }}
       image={getResource('shark.png')}
     />

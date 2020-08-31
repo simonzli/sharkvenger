@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { usePrevious } from 'react-delta';
 import { Sprite, useApp } from '@inlet/react-pixi';
 
@@ -6,6 +7,7 @@ import { CharacterProps } from 'types';
 import { getResource, convertScaleToObject } from 'utils';
 
 import {
+  executeMovements,
   getPropDiff,
   getPropWatchList,
   setUpSprite,
@@ -14,6 +16,7 @@ import {
 export default function Suica(props: CharacterProps = {}) {
   const [sprite, setSprite] = useState<PIXI.Sprite>();
   const prevProps = usePrevious(props);
+  const dispatch = useDispatch();
 
   const app = useApp();
   const INITIAL_SCALE = convertScaleToObject([
@@ -28,7 +31,12 @@ export default function Suica(props: CharacterProps = {}) {
   useEffect(() => {
     if (!sprite) return;
     const diff = getPropDiff(props, prevProps);
-    setUpSprite(sprite, diff, initialValues, false);
+    executeMovements(props.movements ?? [], {
+      sprite,
+      dispatch,
+      pixiApp: app,
+      initialValues: setUpSprite(sprite, diff, initialValues, false),
+    });
   }, getPropWatchList(props));
 
   return (
@@ -36,7 +44,12 @@ export default function Suica(props: CharacterProps = {}) {
       ref={instance => {
         if (!instance || sprite) return;
         setSprite(instance);
-        setUpSprite(instance, props, initialValues, true);
+        executeMovements(props.movements ?? [], {
+          sprite: instance,
+          dispatch,
+          pixiApp: app,
+          initialValues: setUpSprite(instance, props, initialValues, true),
+        });
       }}
       image={getResource('suica.png')}
     />

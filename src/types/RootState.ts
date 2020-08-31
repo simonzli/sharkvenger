@@ -12,13 +12,15 @@ export const defaultConversationState: ConversationState = {
 
 export interface DirectorState {
   script: string;
-  line: number;
+  line: string;
   breakpoint?: DirectorState;
+  readyCount: number;
 }
 
 export const defaultDirectorState: DirectorState = {
-  script: 'intro',
-  line: 0,
+  script: 'startScreen',
+  line: '0',
+  readyCount: 0,
 };
 
 export interface Geolocation {

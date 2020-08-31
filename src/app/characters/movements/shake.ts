@@ -1,9 +1,18 @@
 import gsap from 'gsap';
 import { DEG_TO_RAD } from 'pixi.js';
 
+import { MovementProps } from 'types';
+
 export const SHAKE_ANGLE = 10;
 
-export const shake = async (g: PIXI.Sprite, speed = 0.5, initialAngle = 0) => {
+export const shake = async ({
+  sprite,
+  speed = 0.5,
+  initialValues,
+}: MovementProps) => {
+  const g = sprite;
+  const initialAngle = initialValues?.initialAngle ?? 0;
+
   try {
     const timeline = gsap.timeline({ immediateRender: false });
     timeline.to(g.transform, {
@@ -36,4 +45,8 @@ export const shake = async (g: PIXI.Sprite, speed = 0.5, initialAngle = 0) => {
   } catch (err) {
     console.error(err);
   }
+};
+
+export const stopShaking = ({ sprite }: MovementProps) => {
+  gsap.killTweensOf(sprite.transform, 'rotation');
 };

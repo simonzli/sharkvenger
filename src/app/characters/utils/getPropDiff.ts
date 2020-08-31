@@ -20,10 +20,5 @@ export const getPropDiff = (
   if (prevProps.initialScale !== props.initialScale)
     diff.initialScale = props.initialScale;
 
-  const movementsSet = new Set<string>();
-  (props.movements ?? []).forEach(m => movementsSet.add(m));
-  (prevProps.movements ?? []).forEach(m => movementsSet.delete(m));
-  diff.movements = Array.from(movementsSet);
-
   return diff;
 };

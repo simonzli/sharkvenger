@@ -13,20 +13,19 @@ import ConversationBox from 'app/components/ConversationBox';
 import CapsTbpLogos from 'app/components/CapsTbpLogos';
 import MathQuiz from 'app/components/MathQuiz';
 
-import { Line, Script } from 'app/scripts';
-
 import Shark from 'app/characters/Shark';
 import Suica from 'app/characters/Suica';
+
+import { active, inactive, stopAll } from 'app/characters/movements';
+
+import { getScript, getCharacterPosition, getExistingCharacters } from 'utils';
 
 import {
   Character as CharacterEnum,
   CharacterName,
 } from 'app/scripts/characters';
-import { CharacterProps } from 'types';
-
-interface DirectorProps {
-  script: Script;
-}
+import { getTransitionScriptId, TRANSITION_ID } from 'app/scripts';
+import { CharacterProps, Line, Script } from 'types';
 
 type Character = {
   character: CharacterEnum;
@@ -35,24 +34,52 @@ type Character = {
   position: 'left' | 'right' | 'middle';
 };
 
-export default function Director(props: DirectorProps) {
+export default function Director() {
   const state = useSelector(getDirectorState);
   const dispatch = useDispatch();
 
-  const { script } = props;
-  const { line } = state;
   const [initialized, setInitialized] = useState(false);
   const [characters, setCharacters] = useState<Character[]>([]);
+  const [isLineFinished, setLineFinished] = useState(false);
+
+  const { script: scriptId, line: lineId } = state;
+  const script = getScript(scriptId);
+  const line = script.lines.find(l => l.id === lineId) ?? script.lines[0];
 
   const app = useApp();
   const { width, height } = app.screen;
 
   useEffect(() => {
-    goToNextLine(line);
+    goToNextLine(script, line);
   }, []);
 
   useEffect(() => {
     updateCharactersList();
+  }, [line]);
+
+  useEffect(() => {
+    if (state.readyCount === line.settings.length) {
+      setLineFinished(true);
+      if (line.autoNext) {
+        goToNextLine();
+      }
+    }
+  }, [state.readyCount]);
+
+  useEffect(() => {
+    const name = CharacterName[line.mainCharacter ?? -1];
+    const mainCharacter = getCharacter(line.mainCharacter ?? -1);
+    const namePosition = mainCharacter?.position ?? 'left';
+    const { text = '' } = line;
+
+    dispatch(
+      conversationActions.updateConversation({
+        name,
+        namePosition,
+        text,
+        showConversationBox: line.text !== undefined,
+      }),
+    );
   }, [line]);
 
   const getCharacterSprite = (character: CharacterEnum) => {
@@ -62,94 +89,142 @@ export default function Director(props: DirectorProps) {
       case CharacterEnum.Suica:
         return Suica;
       default:
-        throw new Error('Unknown character:' + character);
+        throw new Error('Unknown character: ' + character);
     }
   };
 
   const getActiveMovement = (character: CharacterEnum) => {
-    if (script.lines[line][0].character === character) return 'active';
-    const relevantLine = script.lines[line].find(
-      l => l.character === character,
-    );
-    if (relevantLine && relevantLine.movements?.includes('active'))
-      return 'active';
-    return '!active';
+    if (line.mainCharacter === character) return active;
+    const relevantSetting = line.settings.find(s => s.character === character);
+    if (relevantSetting && relevantSetting.movements?.includes(active))
+      return active;
+    return inactive;
   };
 
-  const goToNextLine = (nextLine?: number) => {
-    const nl =
-      nextLine === undefined
-        ? script.lines.length === line + 1
-          ? 0
-          : line + 1
-        : nextLine;
-    localStorage.setItem('line', '' + nl);
-    dispatch(directorActions.updateDirector({ ...state, line: nl }));
+  const goToNextLine = (nextScript?: Script, nextLine?: Line) => {
+    let ns: Script;
+    let nl: Line;
+    if (nextScript) {
+      ns = nextScript;
+      nl = nextLine ?? nextScript.lines[0];
+    } else {
+      const lineIndex = script.lines.findIndex(l => l.id === lineId);
+      if (lineIndex === script.lines.length - 1) {
+        if (script.jumpTo) {
+          ns = getScript(script.jumpTo.script);
+          nl = script.jumpTo.lineId
+            ? ns.lines.find(l => l.id === script.jumpTo!.lineId) ?? ns.lines[0]
+            : ns.lines[0];
+        } else {
+          return;
+        }
+      } else {
+        ns = script;
+        nl = script.lines[lineIndex + 1];
+      }
+    }
 
-    const name = CharacterName[script.lines[nl][0].character ?? -1];
-    const mainCharacter = getCharacter(script.lines[nl][0].character ?? -1);
-    const namePosition = mainCharacter?.position ?? 'left';
-    const { text = '' } = script.lines[nl][0];
-    dispatch(
-      conversationActions.updateConversation({
-        name,
-        namePosition,
-        text,
-        showConversationBox: true,
-      }),
-    );
+    if (script.id !== ns.id && !script.id.startsWith(TRANSITION_ID)) {
+      setCharacters([]);
+      setInitialized(false);
+
+      dispatch(
+        directorActions.updateDirector({
+          ...state,
+          script: getTransitionScriptId(ns.id, nl.id),
+          line: '0',
+          readyCount: 0,
+        }),
+      );
+    } else {
+      dispatch(
+        directorActions.updateDirector({
+          ...state,
+          script: ns.id,
+          line: nl.id,
+          readyCount: 0,
+        }),
+      );
+    }
   };
 
   const getCharacter = (character: CharacterEnum) =>
     characters.find(c => c.character === character);
 
-  const getCharacterProps = (line: Line, prevProps?: CharacterProps) => {
+  const getCharacterProps = (
+    line: Line,
+    character: CharacterEnum,
+    prevProps?: CharacterProps,
+  ) => {
     const props: CharacterProps = {};
-    if (line.character === undefined) return props;
+
     const HEIGHT = height - 130;
     if (prevProps === undefined) {
       props.initialPosition = [48, HEIGHT];
       props.initialScale = [1, 1];
-      if (line.position === 'right') {
+      if (getCharacterPosition(character, script, line.id) === 'right') {
         props.initialPosition[0] = width - 90;
         props.initialScale[0] = -1;
       }
     }
 
-    props.movements = [getActiveMovement(line.character)];
-
     return props;
+  };
+
+  const createCharacter = (character: CharacterEnum): Character => {
+    const sprite = getCharacterSprite(character);
+
+    return {
+      position: getCharacterPosition(character, script, line.id),
+      character: character,
+      sprite,
+      props: getCharacterProps(line, character),
+    };
   };
 
   const updateCharactersList = () => {
     const newCharacters = [...characters];
-    if (!initialized) {
-      for (const setting of script.initialSetting) {
-        if (getCharacter(setting.character) !== undefined) continue;
-        const sprite = getCharacterSprite(setting.character);
 
-        newCharacters.push({
-          position: setting.position ?? 'left',
-          character: setting.character,
-          sprite,
-          props: getCharacterProps(setting),
-        });
+    if (script.id.startsWith(TRANSITION_ID)) {
+      for (const character of newCharacters) {
+        character.props = {
+          ...character.props,
+          movements: [stopAll],
+        };
+      }
+
+      setCharacters(newCharacters);
+      return;
+    }
+
+    if (!initialized) {
+      const existingCharacters = getExistingCharacters(script, line.id);
+      for (const character of existingCharacters) {
+        if (getCharacter(character) !== undefined) continue;
+        newCharacters.push(createCharacter(character));
       }
       setInitialized(true);
     }
 
-    const currentLines = script.lines[line];
+    for (const setting of line.settings) {
+      if (!newCharacters.find(c => c.character === setting.character)) {
+        newCharacters.push(createCharacter(setting.character));
+      }
+    }
+
     for (const character of newCharacters) {
-      const relevantLine = currentLines.find(
-        l => l.character === character.character,
+      const relevantSetting = line.settings.find(
+        s => s.character === character.character,
       );
+
+      const movements = relevantSetting?.movements ?? [];
+      if (!line.noActiveDetection) {
+        movements.push(getActiveMovement(character.character));
+      }
 
       character.props = {
         ...character.props,
-        movements: [
-          ...(relevantLine?.movements ?? []),
-          getActiveMovement(character.character),
-        ],
+        movements,
       };
     }
 
@@ -159,12 +234,12 @@ export default function Director(props: DirectorProps) {
   const renderCharacters = () =>
     characters
       .sort((a, b) => {
-        const isAActive = (a.props.movements ?? []).includes('active');
+        const isAActive = (a.props.movements ?? []).includes(active);
         if (!isAActive) return -1;
-        const isBActive = (b.props.movements ?? []).includes('active');
+        const isBActive = (b.props.movements ?? []).includes(active);
         if (!isBActive) return 1;
 
-        const isASpeaking = script.lines[line][0].character === a.character;
+        const isASpeaking = line.mainCharacter === a.character;
         return isASpeaking ? 1 : -1;
       })
       .map(c => <c.sprite {...c.props} key={c.character} />);
@@ -177,7 +252,9 @@ export default function Director(props: DirectorProps) {
 
       <Container>{renderCharacters()}</Container>
 
-      <ConversationBox onClick={() => goToNextLine()} />
+      <ConversationBox
+        onClick={isLineFinished ? () => goToNextLine() : undefined}
+      />
 
       <MathQuiz />
     </>

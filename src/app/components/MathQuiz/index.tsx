@@ -7,7 +7,7 @@ export default function MathQuiz() {
       x={16}
       y={120}
       onInput={input => console.log(input)}
-      placeholder="Enter your UM ID"
+      placeholder="Enter your Uniqname"
     />
   );
 }

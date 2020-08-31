@@ -3,7 +3,6 @@ import { TextStyle, Loader } from 'pixi.js';
 import { Stage } from '@inlet/react-pixi';
 import { ReactReduxContext } from 'react-redux';
 
-import { intro } from 'app/scripts';
 import Director from 'app/controllers/Director';
 
 import { getResource } from 'utils';
@@ -77,7 +76,7 @@ export function HomePage() {
       >
         {ready && resourceReady && (
           <>
-            <Director script={intro} />
+            <Director />
             <SharkDetector />
           </>
         )}
