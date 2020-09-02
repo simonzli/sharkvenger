@@ -1,5 +1,6 @@
 export * from './getBasename';
 export * from './getCharacterPosition';
+export * from './getDelayString';
 export * from './getExistingCharacters';
 export * from './getLocation';
 export * from './getResource';

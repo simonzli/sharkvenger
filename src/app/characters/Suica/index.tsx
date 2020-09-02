@@ -12,6 +12,7 @@ import {
   getPropWatchList,
   setUpSprite,
 } from 'app/characters/utils';
+import { Character } from 'app/scripts';
 
 export default function Suica(props: CharacterProps = {}) {
   const [sprite, setSprite] = useState<PIXI.Sprite>();
@@ -28,13 +29,18 @@ export default function Suica(props: CharacterProps = {}) {
     initialPosition: props.initialPosition,
   };
 
+  const movementProps = {
+    dispatch,
+    pixiApp: app,
+    character: Character.Suica,
+  };
+
   useEffect(() => {
     if (!sprite) return;
     const diff = getPropDiff(props, prevProps);
     executeMovements(props.movements ?? [], {
+      ...movementProps,
       sprite,
-      dispatch,
-      pixiApp: app,
       initialValues: setUpSprite(sprite, diff, initialValues, false),
     });
   }, getPropWatchList(props));
@@ -45,9 +51,8 @@ export default function Suica(props: CharacterProps = {}) {
         if (!instance || sprite) return;
         setSprite(instance);
         executeMovements(props.movements ?? [], {
+          ...movementProps,
           sprite: instance,
-          dispatch,
-          pixiApp: app,
           initialValues: setUpSprite(instance, props, initialValues, true),
         });
       }}

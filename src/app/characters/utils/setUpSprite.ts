@@ -1,5 +1,6 @@
 import { Scale, CharacterProps } from 'types';
 import { multiplyScale, convertScaleToObject } from 'utils';
+import { inactive } from 'app/characters/movements';
 
 export const setUpSprite = (
   sprite: PIXI.Sprite,
@@ -37,6 +38,10 @@ export const setUpSprite = (
     sprite.position.set(diffPosition.x, diffPosition.y);
   }
   initial.initialPosition = [sprite.position.x, sprite.position.y];
+
+  if (initAll && diff.movements?.includes(inactive)) {
+    sprite.tint = 0x999999;
+  }
 
   if (initAll) sprite.anchor.set(0.5, 0.5);
 

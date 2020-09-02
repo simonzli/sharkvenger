@@ -12,16 +12,17 @@ const directorSlice = createSlice({
       state.breakpoint = payload.breakpoint;
       state.line = payload.line;
       state.script = payload.script;
-      if (payload.readyCount !== undefined) {
-        state.readyCount = payload.readyCount;
+      if (payload.ready !== undefined) {
+        state.ready = payload.ready ?? [];
       }
     },
-    ready(state: DirectorState) {
-      state.readyCount = (state.readyCount ?? 0) + 1;
+    ready(state: DirectorState, action: PayloadAction<string>) {
+      const item = action.payload;
+      if (state.ready.includes(item)) return;
+      state.ready.push(item);
     },
-    readyAt(state: DirectorState, action: PayloadAction<number>) {
-      const count = action.payload;
-      state.readyCount = count;
+    clearReady(state: DirectorState) {
+      state.ready = [];
     },
   },
 });

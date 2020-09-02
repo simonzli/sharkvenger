@@ -32,14 +32,18 @@ export default function Shark(props: CharacterProps = {}) {
     initialPosition: props.initialPosition,
   };
 
+  const movementProps = {
+    dispatch,
+    pixiApp: app,
+    character: Character.MommyShark,
+  };
+
   useEffect(() => {
     if (!sprite) return;
     const diff = getPropDiff(props, prevProps);
     executeMovements(props.movements ?? [], {
+      ...movementProps,
       sprite,
-      dispatch,
-      pixiApp: app,
-      character: Character.MommyShark,
       initialValues: setUpSprite(sprite, diff, initialValues, false),
     });
   }, getPropWatchList(props));
@@ -50,9 +54,8 @@ export default function Shark(props: CharacterProps = {}) {
         if (!instance || sprite) return;
         setSprite(instance);
         executeMovements(props.movements ?? [], {
+          ...movementProps,
           sprite: instance,
-          dispatch,
-          pixiApp: app,
           initialValues: setUpSprite(instance, props, initialValues, true),
         });
       }}

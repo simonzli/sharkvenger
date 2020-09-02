@@ -21,6 +21,6 @@ export const executeMovements = async (
   }
 
   if (level === 0) {
-    props.dispatch(directorActions.ready());
+    props.dispatch(directorActions.ready(props.character + ''));
   }
 };

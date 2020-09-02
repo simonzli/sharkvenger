@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, useApp } from '@inlet/react-pixi';
 import { useSelector, useDispatch } from 'react-redux';
+import { usePrevious } from 'react-delta';
 
 import {
   getDirectorState,
@@ -24,7 +25,7 @@ import {
   Character as CharacterEnum,
   CharacterName,
 } from 'app/scripts/characters';
-import { getTransitionScriptId, TRANSITION_ID } from 'app/scripts';
+import { getTransitionScriptId, isTransitionScript } from 'app/scripts';
 import { CharacterProps, Line, Script } from 'types';
 
 type Character = {
@@ -41,6 +42,7 @@ export default function Director() {
   const [initialized, setInitialized] = useState(false);
   const [characters, setCharacters] = useState<Character[]>([]);
   const [isLineFinished, setLineFinished] = useState(false);
+  const prevCharacters = usePrevious(characters);
 
   const { script: scriptId, line: lineId } = state;
   const script = getScript(scriptId);
@@ -58,13 +60,19 @@ export default function Director() {
   }, [line]);
 
   useEffect(() => {
-    if (state.readyCount === line.settings.length) {
+    const isTransitioning = isTransitionScript(scriptId);
+    if (
+      (isTransitioning &&
+        (!prevCharacters ||
+          state.ready.length === Math.min(prevCharacters.length, 1))) ||
+      (!isTransitioning && state.ready.length === line.settings.length)
+    ) {
       setLineFinished(true);
       if (line.autoNext) {
         goToNextLine();
       }
     }
-  }, [state.readyCount]);
+  }, [state.ready]);
 
   useEffect(() => {
     const name = CharacterName[line.mainCharacter ?? -1];
@@ -124,7 +132,7 @@ export default function Director() {
       }
     }
 
-    if (script.id !== ns.id && !script.id.startsWith(TRANSITION_ID)) {
+    if (script.id !== ns.id && !isTransitionScript(script.id)) {
       setCharacters([]);
       setInitialized(false);
 
@@ -133,7 +141,7 @@ export default function Director() {
           ...state,
           script: getTransitionScriptId(ns.id, nl.id),
           line: '0',
-          readyCount: 0,
+          ready: [],
         }),
       );
     } else {
@@ -142,10 +150,12 @@ export default function Director() {
           ...state,
           script: ns.id,
           line: nl.id,
-          readyCount: 0,
+          ready: [],
         }),
       );
     }
+
+    setLineFinished(false);
   };
 
   const getCharacter = (character: CharacterEnum) =>
@@ -185,11 +195,11 @@ export default function Director() {
   const updateCharactersList = () => {
     const newCharacters = [...characters];
 
-    if (script.id.startsWith(TRANSITION_ID)) {
+    if (isTransitionScript(script.id)) {
       for (const character of newCharacters) {
         character.props = {
           ...character.props,
-          movements: [stopAll],
+          movements: [[inactive, stopAll]],
         };
       }
 

@@ -13,5 +13,5 @@ export type MovementProps = {
   pixiApp: PIXI.Application;
   initialValues?: CharacterProps;
   speed?: number;
-  character?: Character;
+  character: Character;
 };

@@ -11,6 +11,7 @@ import {
 import gsap from 'gsap';
 
 import { getConversationState } from 'store/slices';
+import { CONVERSATION_DELAY_IDENTIFIER } from 'app/scripts';
 
 interface ConversationBoxProps {
   onClick?: (event: PIXI.InteractionEvent) => void;
@@ -31,6 +32,9 @@ const nameTextStyle = new TextStyle({
   fontSize: 16,
   letterSpacing: 1,
 });
+
+const sleep = (delay: number) =>
+  new Promise(resolve => setTimeout(resolve, delay));
 
 export default function ConversationBox(props: ConversationBoxProps) {
   const state = useSelector(getConversationState);
@@ -53,11 +57,22 @@ export default function ConversationBox(props: ConversationBoxProps) {
     printText();
   }, [text]);
 
-  const printText = (newText = '') => {
+  const printText = async (newText = '', nextIndex = 0) => {
     if (!text) return;
     setDisplayText(newText);
-    if (newText.length < text.length) {
-      setTimeout(() => printText(newText + text.charAt(newText.length)), 15);
+
+    if (nextIndex < text.length) {
+      if (text.startsWith(CONVERSATION_DELAY_IDENTIFIER, nextIndex)) {
+        const startDelay = nextIndex + CONVERSATION_DELAY_IDENTIFIER.length;
+        const endDelay = text.indexOf(']', startDelay);
+        const delayDuration = +text.slice(startDelay, endDelay);
+        await sleep(delayDuration);
+        nextIndex = endDelay + 1;
+      }
+      setTimeout(
+        () => printText(newText + text.charAt(nextIndex), nextIndex + 1),
+        15,
+      );
     } else {
       setClickable(true);
     }

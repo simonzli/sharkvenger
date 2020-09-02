@@ -2,8 +2,21 @@ import gsap from 'gsap';
 import { MovementProps } from 'types';
 import { convertScaleToObject } from 'utils';
 
-export const SHARK_INITIAL_SCENE_DURATION = 20.4;
-export const initialScene = async ({
+export const initialSceneA = async ({
+  sprite,
+  initialValues,
+  pixiApp,
+}: MovementProps) => {
+  const initialScale = convertScaleToObject(
+    initialValues?.initialScale ?? { x: 1, y: 1 },
+  );
+  const { width = 600 } = pixiApp?.screen ?? {};
+  sprite.position.set(width, 100);
+  sprite.scale.y = -initialScale.y;
+  sprite.angle = 135;
+};
+
+export const initialSceneB = async ({
   sprite,
   initialValues,
   pixiApp,
@@ -27,8 +40,8 @@ export const initialScene = async ({
     },
     {
       pixi: {
-        x: 10,
-        y: height - 40,
+        x: (-width * 2) / 3,
+        y: height + 100,
       },
       duration: 2,
       delay: 1,
@@ -171,4 +184,20 @@ export const initialScene = async ({
     time,
   );
   await timeline.play();
+};
+
+export const initialSceneC = async ({
+  sprite,
+  initialValues,
+  pixiApp,
+}: MovementProps) => {
+  const { width = 600, height = 800 } = pixiApp?.screen ?? {};
+
+  const initialScale = convertScaleToObject(
+    initialValues?.initialScale ?? { x: 1, y: 1 },
+  );
+
+  sprite.position.set(width / 2 + 10, height - 180);
+  sprite.scale.set(initialScale.x * 1.3, -initialScale.y * 1.3);
+  sprite.angle = -80;
 };

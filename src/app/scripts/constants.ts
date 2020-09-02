@@ -1,0 +1,1 @@
+export const CONVERSATION_DELAY_IDENTIFIER = '[DELAY:';

@@ -14,13 +14,13 @@ export interface DirectorState {
   script: string;
   line: string;
   breakpoint?: DirectorState;
-  readyCount: number;
+  ready: string[];
 }
 
 export const defaultDirectorState: DirectorState = {
   script: 'startScreen',
-  line: '0',
-  readyCount: 0,
+  line: 'b',
+  ready: [],
 };
 
 export interface Geolocation {
